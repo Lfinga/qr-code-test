@@ -33,6 +33,7 @@ export default function App() {
           config,
           (decodedText) => {
             setScanResult(decodedText);
+            stopScanner();
           },
           (error) => {
             // Silent error handling for scanning process
@@ -73,8 +74,27 @@ export default function App() {
     setIsScanning(true);
   };
 
+  // Function to handle stopping the scanner
+  const stopScanner = () => {
+    if (scannerRef.current && isScanning) {
+      scannerRef.current
+        .stop()
+        .then(() => {
+          setIsScanning(false);
+          // We don't hide the scanner component
+        })
+        .catch((error) => {
+          console.error('Failed to stop scanner:', error);
+          setIsScanning(false);
+        });
+    } else {
+      setIsScanning(false);
+    }
+  };
+
   // Function to close the scanner view
   const closeScanner = () => {
+    stopScanner();
     setShowScanner(false);
     // Clear the scanner instance when closing
     if (scannerRef.current) {
